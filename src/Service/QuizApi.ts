@@ -1,5 +1,8 @@
 import {fetchedQuestions, quizQuestions} from '../Types/types'
 
+const shuffleArray = (array: any[]) =>
+    [...array].sort(() => Math.random() - 0.5)
+
 export const getQuestions = async (totalQuestions: number, level: string) : Promise<quizQuestions[]> => {
     const fetchQuestions = await fetch(`https://opentdb.com/api.php?amount=${totalQuestions}&difficulty=${level}&type=multiple`)
 
@@ -9,9 +12,8 @@ export const getQuestions = async (totalQuestions: number, level: string) : Prom
         return {
             question: questionObj.question,
             answer: questionObj.correct_answer,
-            options: answerArray
+            options: shuffleArray(answerArray)
         }
     })
-    console.log(quizQuestions)
     return quizQuestions
 }

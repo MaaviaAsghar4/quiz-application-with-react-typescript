@@ -5,13 +5,18 @@ import {questionProps} from '../Types/types'
 const Quiz: React.FC<questionProps> = ({question,answer,options,handleStep}) => {
     let [score,setScore] = useState(0)
     let setActive = (ans : string):void => {
-        console.log(ans)
         if (answer===ans) {
             setScore(++score)
         }
         handleStep(score);
-        console.log(score)
     }
+
+    if(!question) {
+        return (
+            <h2>Loading....</h2>
+        )
+    }
+
     return (
         <div className='quiz-container'>
             <div>
