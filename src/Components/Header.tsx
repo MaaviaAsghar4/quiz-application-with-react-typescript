@@ -2,12 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { getQuestions } from './../Service/QuizApi'
 import '../App.css'
 import Quiz from './Quix'
+import Result from './Result'
+import { quizQuestions } from '../Types/types'
 
-const Header = () => {
+const Header: React.FC = () => {
     const [difficultyLevel, setDifficultyLevel] = useState('')
     const [totalQuestions, setTotalQuestions] = useState(0)
-    // const [quizQuestions, setQuizQuestions]= useState()
+    const [nextQuestion, setNextQuestion] = useState(0)
+    const [quizQues, setQuizQuestions] = useState<quizQuestions[]>([])
     let [count, setCount] = useState(false)
+    let [showResult, setResult] = useState(false)
+    let [total, setTotal] = useState(0)
 
     let handleQuestions = (e: any) => {
         setTotalQuestions(e.target.value)
@@ -18,17 +23,48 @@ const Header = () => {
     }
 
     const fetchQuiz = () => {
-       setCount(true)
+        setCount(true)
+    }
+
+    let handleStep = (score: number) => {
+        if (nextQuestion !== quizQues.length - 1) {
+            setNextQuestion(prev => prev + 1)
+        } else if (nextQuestion === quizQues.length - 1) {
+            setTotal(score)
+            setResult(true)
+        }
+    }
+
+    let handleNewGame = () => {
+        setResult(false)
+        setCount(false)
     }
 
     useEffect(() => {
-        getQuestions(totalQuestions, difficultyLevel);
-        
-    }, [totalQuestions, difficultyLevel,count])
+        const fetchQuestions = async () => {
+            const quizQues: quizQuestions[] = await getQuestions(totalQuestions, difficultyLevel);
+            setQuizQuestions(quizQues)
+        }
+        fetchQuestions()
+    }, [totalQuestions, difficultyLevel, count])
 
-    if(count) {
+    if (showResult) {
         return (
-            <Quiz />
+            <Result
+                totalScore={total}
+                newGame={handleNewGame}
+            />
+        )
+    }
+
+    if (count) {
+        return (
+            <Quiz
+                question={quizQues[nextQuestion].question}
+                answer={quizQues[nextQuestion].answer}
+                options={quizQues[nextQuestion].options}
+                handleStep={handleStep}
+            />
         )
     }
     return (

@@ -1,30 +1,30 @@
 import React, { useState } from 'react'
 import '../App.css'
+import {questionProps} from '../Types/types'
 
-const Quiz = () => {
-    let [answer,setAnswer] = useState('')
-    let setActive = (e : any) => {
-        setAnswer(e.target.value)
-        e.target.classList.add('active')
+const Quiz: React.FC<questionProps> = ({question,answer,options,handleStep}) => {
+    let [score,setScore] = useState(0)
+    let setActive = (ans : string):void => {
+        console.log(ans)
+        if (answer===ans) {
+            setScore(++score)
+        }
+        handleStep(score);
+        console.log(score)
     }
-
-    const answers = [10, 20, 30, 40]
     return (
         <div className='quiz-container'>
             <div>
-                <h3> Q: How many world cups have been played since 1975?</h3>
+                <h3> Q: {question}</h3>
             </div>
             <div>
                 <ul>
-                    {answers.map((answer, i) => {
+                    {options.map((answer, i) => {
                         return (
-                            <li key={i} value={answer} onClick={setActive} className='option-list'>{answer}</li>
+                        <li key={i} value={answer} onClick={()=>setActive(answer)} className='option-list'>{answer}</li>
                         )
                     })}
                 </ul>
-            </div>
-            <div>
-                <button className='next'>Next</button>
             </div>
         </div>
     )
